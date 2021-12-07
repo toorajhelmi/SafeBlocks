@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.11
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BalancedBlocks", "BalancedBlocks\BalancedBlocks.csproj", "{3F1748E5-C13C-47D2-9269-7EE3C32F40BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|anycpu = Debug|anycpu
+		Release|anycpu = Release|anycpu
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F1748E5-C13C-47D2-9269-7EE3C32F40BE}.Debug|anycpu.ActiveCfg = Debug|anycpu
+		{3F1748E5-C13C-47D2-9269-7EE3C32F40BE}.Debug|anycpu.Build.0 = Debug|anycpu
+		{3F1748E5-C13C-47D2-9269-7EE3C32F40BE}.Release|anycpu.ActiveCfg = Release|anycpu
+		{3F1748E5-C13C-47D2-9269-7EE3C32F40BE}.Release|anycpu.Build.0 = Release|anycpu
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F0977DF-8846-4930-9C0D-B327110150BA}
+	EndGlobalSection
+EndGlobal
