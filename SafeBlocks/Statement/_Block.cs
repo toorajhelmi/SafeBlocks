@@ -1,10 +1,25 @@
 ﻿using System;
-namespace BalancedBlocks
+using System.Diagnostics;
+
+namespace SafeBlocks
 {
-    public class Block
+    public abstract class _Block 
     {
-        public Block()
-        {
-        }
+        public string Id { get; set; }
+
+        protected Random rand = new Random();
+        protected Stopwatch stopWatch = new Stopwatch();
+
+        public abstract void Do();
+    }
+
+    public abstract class _Block<T>
+    {
+        public string Id { get; set; }
+
+        protected Random rand = new Random();
+        protected Stopwatch stopWatch = new Stopwatch();
+
+        public abstract void Do(T param);
     }
 }

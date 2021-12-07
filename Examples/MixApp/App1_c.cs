@@ -1,53 +1,40 @@
-﻿using System;
-using SafeBlocks;
+﻿using SafeBlocks;
 using SafeBlocks.Statement;
 
 namespace Examples.MixApp
 {
-    public class App1_b
+    public class App1_c : MixApp
     {
-        private const int maxLow = 1000;
-        private readonly int high;
-
-        private __ program;
-
-        public App1_b(int high) => this.high = high;
-
-        public void Run()
+        public App1_c(int high) : base(high)
         {
-            program = P1();
-            program.Do();
+            Program = P1();
         }
 
-        public Func<int> GetInput { get; set; }
+        public override void Run()
+        {
+            base.Run();
+            P1().Do();
+        }
 
         #region P1
 
-        private __ P1() =>
-            __._(() =>
+        private _Action P1() =>
+            _Action._(() =>
             {
                 var low = GetInput();
 
-                if (low < high)
-                {
-                    P11(low);
-                }
-                else
-                {
-                    P12(low);
-                }
+                _If._("P1", () => low < high, P11(low), P12(low), 1000).Do();
             });
 
         #region P11
 
-        private __ P11(int low) =>
-            __._(() =>
+        private _Action P11(int low) =>
+            _Action._(() =>
             {
                 Helper.Display("P11");
 
-                for (int i = 0; i < 2; i++)
-                {
-                    _For._(1, 5, 10, new _Action<int>(j =>
+                _For._("L1", 0, 2, 2, 
+                    _For._("L2", 1, 5, 10, new _Action<int>(j =>
                     {
                         if (low < high / 2)
                         {
@@ -55,10 +42,9 @@ namespace Examples.MixApp
                         }
                         else
                         {
-                            P112(low);
+                            P112(low).Do();
                         }
-                    }));
-                }
+                    }))).Do();
             });
 
         #region 111
@@ -69,10 +55,10 @@ namespace Examples.MixApp
 
         #region 112
 
-        private void P112(int low) => _If._(() => low < 3 * high / 4, P1121(low), P1122());
+        private _Block P112(int low) => _If._("P112", () => low < 3 * high / 4, P1121(low), P1122());
 
         private _For P1121(int low) =>
-            _For._(0, 4, 10, _Action<int>._(i => Helper.Sleep(5, "P1121")));
+            _For._("L3", 0, 4, 10, _Action<int>._(i => Helper.Sleep(5, "P1121")));
 
         private _Action P1122() =>
             _Action._(() => Helper.Sleep(5, "P1122"));
@@ -84,33 +70,21 @@ namespace Examples.MixApp
 
         #region P12
 
-        private __ P12(int low) =>
-            __._(() =>
-            {
-                if (low < high * 2)
-                {
-                    P121();
-                }
-                else
-                {
-                    P122(low);
-                }
-            });
+        private _Block P12(int low) =>
+            _If._("P12", () => low < high * 2, P121(), P122(low));
 
         #region P121
 
-        private __ P121() =>
-            __._(() => Helper.Sleep(10, "121"));
+        private _Action P121() =>
+            _Action._(() => Helper.Sleep(10, "121"));
 
         #endregion
 
         #region P122
 
-        private void P122(int low) =>
-            _For._(0, 20, 20, _Action<int>._(i =>
-            {
-                _If._(() => low < 3 * high, P1221(), P1222());
-            }));
+        private _Block P122(int low) =>
+            _For._("L4", 0, 20, 20, 
+                _If._("P122", () => low < 3 * high, P1221(), P1222()));
 
         #region P1221
 

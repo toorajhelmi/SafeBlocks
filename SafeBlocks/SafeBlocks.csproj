@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="String\" />
+    <None Remove="Basic\" />
+    <None Remove="Helper\" />
+    <None Remove="App\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="String\" />
+    <Folder Include="Statement\" />
+    <Folder Include="Simulation\" />
+    <Folder Include="App\" />
+  </ItemGroup>
+</Project>

@@ -1,66 +1,92 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using SafeBlocks;
 using SafeBlocks.Analysis;
-using SafeBlocks.String;
 
-namespace Examples.String
+namespace Examples.MixApp
 {
     class Program
     {
-        public static void StringExample()
+        public static void MixAppExample()
         {
-            var sb = new StringBuilder("");
-            for (int i = 0; i < 1000; i++) sb.Append("HelloWorld");
-            var testString = sb.ToString();
+            Config.ExectuionMode = ExecutionMode.Release;
+            Config.ExecutionSpeed = ExecutionSpeed.ExtraFast;
 
-            Adversary<int> adversary;
-
-            Console.WriteLine("Unsafe String");
-
-            adversary = CreateAdversary(true);
-            adversary.Calibrate();
-
-            var subStringAction = new Action(() => testString.Substring(testString.Length / 2));
-
-            adversary.Guess(() => testString.Substring(testString.Length / 2));
-
-            Console.WriteLine("Safe String");
-
-            adversary = CreateAdversary(false);
-            adversary.Calibrate();
-            var _testString = new _String(testString);
-            adversary.Guess(() => _testString.Substring(testString.Length / 2));
+            //ProfileAndRunProgram(new App1_a(200), new App1_a(300));
+            //ProfileAndRunProgram(new App1_b(200), new App1_b(300));
+            ProfileAndRunProgram(new App1_c(200), new App1_c(300));
         }
 
-        private static Adversary<int> CreateAdversary(bool isLeaky)
+        private static void ProfileAndRunProgram(MixApp profilingApp, MixApp executingApp)
         {
-            List<string> testStrings = new List<string>();
-            List<_String> _testStrings = new List<_String>();
-            for (int i = 1; i <= 20; i++)
-            {
-                var sb = new StringBuilder("");
-                for (int j = 0; j < i * 100; j++) sb.Append("HelloWorld");
-                var testString = sb.ToString();
+            Console.WriteLine($"\n\nProfiling {profilingApp.GetType().Name}");
 
-                testStrings.Add(testString);
-                _testStrings.Add(new _String(testString));
+            var adversary = CreateAdversary(profilingApp);
+            adversary.Profile();
+
+            var travesredPaths = new List<string>();
+
+            var startTime = DateTime.Now;
+
+            for (int low = 0; low < 1000; low += 50)
+            {
+                Console.WriteLine($"Running with low = {low}");
+
+                var selectedPath = adversary.Guess(() =>
+                {
+                    executingApp.GetInput = () => low;
+                    executingApp.Run();
+                });
+
+                if (!travesredPaths.Contains(selectedPath))
+                {
+                    travesredPaths.Add(selectedPath);
+                    if (travesredPaths.Count == adversary.EquivalnceSet.Count)
+                    {
+                        break;
+                    }
+                }
             }
 
-            Func<int, int> generateVariant = startIndex => startIndex;
-            Action<int> test;
+            Console.WriteLine("Execution Took " + (DateTime.Now - startTime).TotalMilliseconds / 20);
+        }
 
-            if (isLeaky)
-            {
-                test = new Action<int>(index => testStrings[index].Substring(testStrings[index].Length / 2));
-            }
-            else
-            {
-                test = new Action<int>(index => _testStrings[index].Substring(_testStrings[index].Value.Length / 2));
-            }
+        private static Profiler<int> CreateAdversary(MixApp profilingApp)
+        {
+            static int generateLow(double low) => (int)low;
 
-            var adversary = new Adversary<int>(test, generateVariant, i => i * 100 * 10, new Range(1, 10), 1, 10);
-            return adversary;
+            var test = new Action<int>(low =>
+            {
+                profilingApp.GetInput = () => low;
+                profilingApp.Run();
+            });
+
+            //var equvalenceSet = new Dictionary<string, double> { { "P1221", 500 }, { "P1222", 700 } };
+            var equvalenceSet = new Dictionary<string, double> { { "P111", 75 }, { "P1121", 125 }, { "P1122", 175 }, { "P121", 300 }, { "P1221", 500 }, { "P1222", 700 } };
+
+            //var safeEquivalences = new List<string>();
+
+            //foreach (var equivalence in equvalenceSet)
+            //{
+            //    profilingApp.GetInput = () => (int)equivalence.Value;
+            //    if (TreeAnalyzer.IsSafePath(profilingApp))
+            //    {
+            //        safeEquivalences.Add(equivalence.Key);
+            //        Console.WriteLine($"Not profiling equivalence ({equivalence.Key}, {equivalence.Value}) since its path is safe.");
+            //    }
+            //}
+
+            //foreach (var safeEq in safeEquivalences)
+            //{
+            //    equvalenceSet.Remove(safeEq);
+            //}
+
+            var profiler = new Profiler<int>(test, generateLow, val => val, equvalenceSet)
+            {
+                MatchingCriteria = MatchingCriteria.Distance
+            };
+
+            return profiler;
         }
     }
 }

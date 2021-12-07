@@ -7,7 +7,7 @@ using MathNet.Numerics;
 
 namespace SafeBlocks.Analysis
 {
-    public class Adversary<T>
+    public class Adversary<T1, T2>
     {
         private const int defaultAttempts = 5;
         private bool showMessage = false;
@@ -16,14 +16,17 @@ namespace SafeBlocks.Analysis
         private double slope;
         private double intercept;
         private Stopwatch stopWatch = new Stopwatch();
-        private List<Action<T>> tests;
-        private Func<int, T> generateVariant;
+        private List<Action<T1, T2>> tests;
+        private Func<T1> getFiexd;
+        private Func<int, T1, T2> generateVariant;
         private int attempts;
         private Range variantRange;
 
-        public Adversary(List<Action<T>> tests, Func<int, T> generateVariant, Range? variantRange = null, int attempts = defaultAttempts)
+        public Adversary(List<Action<T1, T2>> tests, Func<T1> getFiexd, Func<int, T1, T2> generateVariant,
+            Range? variantRange = null, int attempts = defaultAttempts)
         {
             this.tests = tests;
+            this.getFiexd = getFiexd;
             this.generateVariant = generateVariant;
             this.attempts = attempts;
             this.variantRange = variantRange ?? new Range(1, 10);
@@ -37,7 +40,8 @@ namespace SafeBlocks.Analysis
             for (int varient = variantRange.Start.Value; varient <= variantRange.End.Value; varient++)
             {
                 long totalTime = 0;
-                var variant = generateVariant(varient);
+                var fixedValue = getFiexd();
+                var variant = generateVariant(varient, fixedValue);
 
                 if (showMessage)
                 {
@@ -47,7 +51,7 @@ namespace SafeBlocks.Analysis
                 for (int attempt = 1; attempt <= attempts; attempt++)
                 {
                     stopWatch.Restart();
-                    tests[random.Next(tests.Count)](variant);
+                    tests[random.Next(tests.Count)](fixedValue, variant);
                     stopWatch.Stop();
 
                     totalTime += stopWatch.ElapsedMilliseconds;

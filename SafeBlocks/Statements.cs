@@ -1,9 +1,13 @@
 ﻿using System;
-namespace BalancedBlocks
+using System.Diagnostics;
+using System.Threading;
+
+namespace SafeBlocks
 {
-    public class For
+    public class Statements
     {
-        public For()
+
+        public static void If(Func<bool> condition, Action ifAction, Action elseAction)
         {
         }
     }

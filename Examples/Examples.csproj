@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SideChannel\" />
+    <None Remove="Wallet\" />
+    <None Remove="String\" />
+    <None Remove="MixApp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SideChannel\" />
+    <Folder Include="Wallet\" />
+    <Folder Include="String\" />
+    <Folder Include="MixApp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SafeBlocks\SafeBlocks.csproj" />
+    <ProjectReference Include="..\SafeBlocks.Analysis\SafeBlocks.Analysis.csproj" />
+  </ItemGroup>
+</Project>

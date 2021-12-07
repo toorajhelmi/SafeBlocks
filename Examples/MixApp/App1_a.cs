@@ -1,11 +1,10 @@
 ﻿using SafeBlocks;
-using SafeBlocks.Statement;
 
 namespace Examples.MixApp
 {
-    public class App2_a : MixApp
+    public class App1_a : MixApp
     {
-        public App2_a(int high) : base(high)
+        public App1_a(int high) : base(high)
         {
             Program = P1();
         }
@@ -41,7 +40,7 @@ namespace Examples.MixApp
 
             for (int i = 0; i < 2; i++)
             {
-                for (int j = 1; j < low % 5; j++)
+                for (int j = 1; j < 5; j++)
                 {
                     if (low < high / 2)
                     {
@@ -80,7 +79,7 @@ namespace Examples.MixApp
 
         private void P1121(int low)
         {
-            for (int i=0; i < low % 4; i++)
+            for (int i=0; i < 4; i++)
             {
                 Helper.Sleep(5, "P1121");
             }
@@ -113,7 +112,7 @@ namespace Examples.MixApp
 
         private void P121()
         {
-            Helper.Sleep(10, "121");
+            Helper.Sleep(10, "P112");
         }
 
         #endregion
@@ -122,7 +121,7 @@ namespace Examples.MixApp
 
         private void P122(int low)
         {
-            for (int i = 0; i < 20; i++)
+            for (int i=0; i < 20; i++)
             {
                 if (low < 3 * high)
                 {

@@ -1,32 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SafeBlocks;
 using SafeBlocks.Analysis;
 using SafeBlocks.String;
 
-namespace Examples
+namespace Examples.String
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void StringExample()
         {
-            StringExample();
+            Config.ExectuionMode = ExecutionMode.Release;
+            Config.ExecutionSpeed = ExecutionSpeed.ExtraFast;
 
-            Console.ReadLine();
-        }
-
-        static void StringExample()
-        {
             var sb = new StringBuilder("");
             for (int i = 0; i < 1000; i++) sb.Append("HelloWorld");
             var testString = sb.ToString();
 
-            Adversary<int> adversary;
+            Profiler<int> adversary;
 
             Console.WriteLine("Unsafe String");
 
             adversary = CreateAdversary(true);
-            adversary.Calibrate();
+            adversary.Profile();
 
             var subStringAction = new Action(() => testString.Substring(testString.Length / 2));
 
@@ -35,12 +32,12 @@ namespace Examples
             Console.WriteLine("Safe String");
 
             adversary = CreateAdversary(false);
-            adversary.Calibrate();
+            adversary.Profile();
             var _testString = new _String(testString);
             adversary.Guess(() => _testString.Substring(testString.Length / 2));
         }
 
-        private static Adversary<int> CreateAdversary(bool isLeaky)
+        private static Profiler<int> CreateAdversary(bool isLeaky)
         {
             List<string> testStrings = new List<string>();
             List<_String> _testStrings = new List<_String>();
@@ -54,7 +51,7 @@ namespace Examples
                 _testStrings.Add(new _String(testString));
             }
 
-            Func<int, int> generateVariant = startIndex => startIndex;
+            Func<double, int> generateLow = startIndex => (int)startIndex;
             Action<int> test;
 
             if (isLeaky)
@@ -66,7 +63,13 @@ namespace Examples
                 test = new Action<int>(index => _testStrings[index].Substring(_testStrings[index].Value.Length / 2));
             }
 
-            var adversary = new Adversary<int>(test, generateVariant, i => i * 100 * 10, new Range(1, 10), 1, 10);
+            var eqSet = new Dictionary<string, double>();
+            for (int i = 1; i <= 10; i++)
+            {
+                eqSet.Add($"{i * 100 * 10} chars", i);
+            }
+
+            var adversary = new Profiler<int>(test, generateLow, i => i * 100 * 10, eqSet);
             return adversary;
         }
     }
